@@ -1,0 +1,16 @@
+{
+    "enable_using_quantize": {
+        "type": "bool",
+        "description": "使用量化节省显存",
+        "default": false,
+        "hint": "需要环境中安装bitsandbytes",
+        "obvious_hint": true
+    },
+    "model": {
+        "type": "string",
+        "description": "使用的模型",
+        "default": "Janus-Pro-1B",
+        "hint": "7B模型相较1B会更加精准，但同时推理时长也会增加",
+        "options": ["Janus-Pro-1B","Janus-Pro-7B"]
+    }
+}
