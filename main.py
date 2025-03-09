@@ -77,7 +77,7 @@ async def describe(file_path, model, if_quantize):
     vl_gpt: MultiModalityCausalLM = AutoModelForCausalLM.from_pretrained(
         model_path, trust_remote_code=True
     )
-    if if_quantize:#int8 q + float16最好
+    if if_quantize:#int8 q + bfloat16
         vl_gpt = quantize_model(vl_gpt)
         if torch.cuda.is_available():
             vl_gpt = vl_gpt.to(torch.bfloat16).cuda().eval()
@@ -88,7 +88,7 @@ async def describe(file_path, model, if_quantize):
             vl_gpt = vl_gpt.to(torch.bfloat16).cuda().eval()
         else:
             vl_gpt = vl_gpt.to("cpu").eval()
-    question = '描述一下这个图片里面有什么，尽量详细到人名、动作、表情、部位细节、物品名称等，尽量详细到人名'
+    question = '描述一下这个图片里面有什么，尽量详细到人名、动作、表情、部位细节、物品名称、文字及位置等，尽量详细到人名'
     image = file_path
     conversation = [
         {
@@ -121,10 +121,10 @@ async def describe(file_path, model, if_quantize):
     )
 
     answer = tokenizer.decode(outputs[0].cpu().tolist(), skip_special_tokens=True)
-    #print("answer:",answer)
+    print("answer:",answer)
     return answer
 
-@register("astrbot_plugin_image_understanding_Janus-Pro", "xiewoc", "为本地模型提供的图片理解补充，使用deepseek-ai/Janus-Pro系列模型", "1.0.0", "https://github.com/xiewoc/astrbot_plugin_image_understanding_Janus-Pro")
+@register("astrbot_plugin_image_understanding_Janus-Pro", "xiewoc", "为本地模型提供的图片理解补充，使用deepseek-ai/Janus-Pro系列模型", "1.0.1", "https://github.com/xiewoc/astrbot_plugin_image_understanding_Janus-Pro")
 class astrbot_plugin_image_video_understanding_Janus_Pro(Star):
     def __init__(self, context: Context,config: dict):
         super().__init__(context)
@@ -152,12 +152,14 @@ class astrbot_plugin_image_video_understanding_Janus_Pro(Star):
                             "file_id": item.file,
                             }
                         ret = await client.api.call_action('get_file', **payloads) # 调用协议端  API
-                        url = ret['url']
-                    
-                        save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'temp',ret['file']) 
+                        #print(ret)
+                        path = ret['file']
+                        #print(path)
+                        #save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),'temp',ret['file'])
+                        #print(save_path)
                         # 使用 curl
-                        subprocess.run(["curl", "-o", save_path, url])
-                        opt = await describe(save_path,model,quantize)
+                        #subprocess.run(["curl", "-o", save_path, url])
+                        opt = await describe(path,model,quantize)
                     else:
                         pass
                 else:

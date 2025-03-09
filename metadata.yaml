@@ -1,6 +1,6 @@
-name: astrbot_plugin_image_understanding_Janus-Pro
+name: astrbot_plugin_image_understanding_Janus_Pro
 desc: 为本地模型提供的图片理解补充，使用deepseek-ai/Janus-Pro系列模型 
 help: 无需其他操作
-version: v1.0.0 
+version: v1.0.1
 author: xiewoc 
 repo: https://github.com/xiewoc/astrbot_plugin_image_understanding_Janus-Pro
